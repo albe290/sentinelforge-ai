@@ -35,6 +35,22 @@ SentinelForge AI was built to solve this gap by combining:
 
 ---
 
+## 🛰️ Attack Surface Management (ASM)
+
+SentinelForge AI includes **cloud-native Attack Surface Management** to continuously identify and assess **externally reachable and high-risk cloud assets** — without deploying agents.
+
+### ASM Capabilities (Azure – Phase 1)
+
+* Discovery of **public-facing resources** (VMs, IPs, load balancers)
+* Identification of **internet-exposed services** (RDP, SSH, management ports)
+* Detection of **over-permissive network rules** (e.g., `0.0.0.0/0`)
+* Correlation of **identity exposure + network exposure**
+* Prioritization of assets most likely to be targeted by attackers
+
+ASM findings are **correlated with vulnerability, identity, and GRC context** so teams understand not just *what is exposed*, but *why it matters*.
+
+---
+
 ## 🤖 Agentic Architecture
 
 SentinelForge AI is powered by multiple AI agents, each representing a senior security function:
@@ -55,6 +71,13 @@ SentinelForge AI is powered by multiple AI agents, each representing a senior se
   * CIS Azure Benchmark
 * Identifies control gaps
 * Flags audit and compliance risk
+
+### 🛰️ Attack Surface Agent
+
+* Identifies externally reachable assets
+* Correlates exposure with identity and configuration risk
+* Flags assets with high likelihood of exploitation
+* Feeds prioritization into risk scoring and SLA logic
 
 ### 🧠 Executive Risk Agent
 
@@ -97,6 +120,13 @@ SentinelForge AI currently focuses on **Microsoft Azure**, using a fully agentle
 * Missing private endpoints
 * No soft delete or immutability
 * Encryption misconfigurations
+
+#### 🛰️ Attack Surface Exposure
+
+* Public IPs and endpoints
+* Internet-facing management ports
+* Overly permissive NSG rules
+* Unprotected external services
 
 #### ⚙️ Security Control Drift
 
