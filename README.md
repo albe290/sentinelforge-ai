@@ -310,6 +310,61 @@ sentinelforge-ai/
 
 ---
 
+## 🧭 Why SentinelForge Starts With These First 5 ASM Findings
+
+SentinelForge AI intentionally begins with a small, high‑impact set of **Attack Surface Management (ASM) findings**.
+
+These first five rules were selected because they represent the **most common, most exploitable, and most business‑impacting cloud breach paths**, using **only agentless control‑plane data**.
+
+### Attacker‑Informed Design
+
+Rather than starting with dozens of compliance checks, SentinelForge models how attackers actually operate:
+
+| Attacker Question                      | Corresponding ASM Finding                      |
+| -------------------------------------- | ---------------------------------------------- |
+| What is exposed to the internet?       | Internet‑Exposed VM / Assets                   |
+| Can I authenticate or gain access?     | Public Asset + Privileged Identity Without MFA |
+| Can I access or exfiltrate data?       | Public Storage Exposure                        |
+| Can I move laterally or expand impact? | Over‑Permissive Network Rules                  |
+| Will anyone detect me?                 | External Assets Without Logging                |
+
+This approach prioritizes **realistic breach paths** over isolated misconfigurations.
+
+### High Signal, Low Noise
+
+Each initial ASM finding:
+
+* Triggers infrequently
+* Represents immediate risk when present
+* Requires little interpretation to understand severity
+
+This ensures SentinelForge builds **trust and credibility** before expanding coverage.
+
+### Agentless and Enterprise‑Safe
+
+All five findings:
+
+* Use Azure control‑plane APIs only
+* Require no host‑based agents
+* Scale across large cloud environments
+* Are suitable for regulated industries
+
+### GRC‑Aligned Without Being Compliance‑Driven
+
+While these findings map cleanly to NIST, CIS, and ISO frameworks, they are defined first by **exploitability and business impact**, not checkbox compliance.
+
+This allows SentinelForge to support:
+
+* Audit readiness
+* Risk‑based prioritization
+* Executive decision‑making
+
+### Foundation for Expansion
+
+These five findings establish the core **risk philosophy** of SentinelForge AI. Future detections build on this foundation rather than replacing it.
+
+---
+
 ## 🔮 Roadmap
 
 * Azure MVP detections
@@ -348,7 +403,5 @@ SentinelForge AI represents a vision of **how cloud security should work**:
 
 > *Forge security intelligence. Guard what matters.*
 
-
----
 
 
