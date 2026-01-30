@@ -1,407 +1,157 @@
-# SentinelForge AI
+---
 
-**SentinelForge AI** is an **agentic, agentless cloud security platform** designed to evaluate cloud control-plane risk with the mindset of a **Senior Vulnerability Engineer and GRC Analyst**.
+# 🔐 AI Governance, Prompt Contracts & Secure RAG Design
 
-The platform performs **API-based, agentless security analysis** of cloud environments (starting with **Microsoft Azure**) and forges raw configuration, identity, and posture signals into **actionable vulnerability intelligence, risk prioritization, and GRC-aligned insights**.
+SentinelForge AI treats **LLM prompts as first-class security and governance artifacts**, not informal instructions.
 
-> SentinelForge AI does not replace engineers — it *thinks like one*.
+In this platform, prompts function as **contracts** that explicitly define **what an AI agent is authorized to do**, **what data it may reason over**, **how it must reason**, and **how it must fail**.
+
+This design ensures SentinelForge AI remains **secure, auditable, deterministic, and cost-controlled** as agentic capabilities scale.
 
 ---
 
-## 🚀 Why SentinelForge AI Exists
+## 📜 Prompt Contracts (LLM Authorization Layer)
 
-Modern cloud environments suffer from three core problems:
+Every AI agent in SentinelForge AI operates under a **versioned Prompt Contract** that enforces five mandatory constraints:
 
-1. **Too much noise** from posture tools and scanners
-2. **Not enough context** for exploitability, ownership, and business risk
-3. **Poor GRC translation** between technical findings and compliance expectations
+### The 5 Prompt Constraints
 
-SentinelForge AI was built to solve this gap by combining:
+1. **Role**
+   Defines the security persona (e.g., Vulnerability Engineer, GRC Analyst, Executive Risk).
 
-* Agentless cloud telemetry
-* AI-powered security reasoning
-* Vulnerability management best practices
-* Governance, Risk, and Compliance (GRC) alignment
+2. **Authority**
+   Explicitly limits what the agent can and cannot decide
+   *(e.g., agents may analyze risk but may not modify scanner-derived facts).*
 
----
+3. **Data Scope**
+   Restricts reasoning to **provided, trusted inputs only**.
+   No inference beyond evidence. Missing data fails closed.
 
-## 🧠 Core Design Principles
+4. **Logic**
+   Enforces deterministic, evidence-based reasoning.
+   No speculative “best practice” hallucinations.
 
----
+5. **Output**
+   Requires strict, schema-bound JSON or predefined executive formats.
 
-## 🏗️ Architecture Diagram (v1)
+> **Code defines execution. Prompt contracts define authorization.**
 
-The SentinelForge AI architecture is designed around **agentless control-plane ingestion**, **continuous attack surface discovery**, and **agentic security reasoning**.
-
-```mermaid
-flowchart LR
-    subgraph Cloud Control Plane
-        A[Azure Resource Graph]
-        B[Microsoft Graph / Entra ID]
-        C[Azure Policy]
-        D[Defender for Cloud]
-    end
-
-    subgraph Ingestion Layer
-        E[Control Plane Collectors]
-    end
-
-    subgraph ASM Engine
-        F[Attack Surface Discovery]
-        G[Exposure Correlation]
-    end
-
-    subgraph Agentic Reasoning Layer
-        H[Vulnerability Engineer Agent]
-        I[Attack Surface Agent]
-        J[GRC Analyst Agent]
-        K[Executive Risk Agent]
-    end
-
-    subgraph Risk & Intelligence Engine
-        L[Risk Scoring]
-        M[Risk Aging & SLA]
-        N[MITRE & Control Mapping]
-    end
-
-    subgraph Outputs
-        O[JSON Findings]
-        P[Executive Risk Summary]
-        Q[GRC Control Mapping]
-        R[Remediation Guidance]
-    end
-
-    A --> E
-    B --> E
-    C --> E
-    D --> E
-
-    E --> F
-    F --> G
-
-    G --> H
-    G --> I
-    H --> L
-    I --> L
-
-    L --> M
-    L --> N
-
-    M --> J
-    N --> J
-
-    J --> K
-
-    K --> O
-    K --> P
-    K --> Q
-    K --> R
-```
+This approach prevents hallucinations, silent decision drift, and uncontrolled agent behavior.
 
 ---
 
-* **Agentless First** – No host agents, no performance impact
-* **Control Plane Focused** – Azure Resource Graph, Microsoft Graph, and policy APIs
-* **AI-Native** – Findings are interpreted by agentic security personas
-* **GRC-Aware** – Every finding maps to security controls and risk frameworks
-* **JSON-First** – Machine-readable output for pipelines, dashboards, and SIEMs
+## 🧠 Core Questions Enforced by Design
+
+Every SentinelForge AI agent is designed by answering four non-negotiable questions **before implementation**:
+
+1. **What authority am I granting this model?**
+2. **What data is it allowed to reason over?**
+3. **How must it reason?**
+4. **How should it fail safely?**
+
+These questions form the foundation of both **AI security** and **AI reliability**.
 
 ---
 
-## 🛰️ Attack Surface Management (ASM)
+## 💸 API & Token Cost Control (Built-In)
 
-SentinelForge AI includes **cloud-native Attack Surface Management** to continuously identify and assess **externally reachable and high-risk cloud assets** — without deploying agents.
+Prompt contracts also serve as a **cost-control mechanism**.
 
-### ASM Capabilities (Azure – Phase 1)
+SentinelForge AI reduces API and token spend by design through:
 
-* Discovery of **public-facing resources** (VMs, IPs, load balancers)
-* Identification of **internet-exposed services** (RDP, SSH, management ports)
-* Detection of **over-permissive network rules** (e.g., `0.0.0.0/0`)
-* Correlation of **identity exposure + network exposure**
-* Prioritization of assets most likely to be targeted by attackers
+* Schema-bound outputs (no verbose free-text)
+* Role-specific prompts to prevent unnecessary reasoning
+* Fail-fast behavior on insufficient data
+* Retrieval throttling and context minimization
+* Routing low-risk tasks to smaller / cheaper models
 
-ASM findings are **correlated with vulnerability, identity, and GRC context** so teams understand not just *what is exposed*, but *why it matters*.
+> **The more authority and scope you give an LLM, the more tokens it will consume.**
 
----
-
-## 🏗️ Architecture Overview
-
-SentinelForge AI follows a **cloud‑native, agentless architecture** designed to surface real attack paths, prioritize risk, and translate technical findings into GRC‑ready outcomes.
-
-### 1) Control Plane Ingestion (Read‑Only)
-
-SentinelForge AI connects to Azure using **API‑only, read‑only access**—no host agents, no performance impact.
-
-* **Azure Resource Graph** – inventory, configuration, posture
-* **Microsoft Graph / Entra ID** – identities, roles, permissions
-* **Azure Policy** – compliance state and drift
-* **Defender for Cloud (signals)** – supplemental security context
-
-### 2) Agentless ASM & Discovery
-
-The platform continuously discovers **externally reachable and high‑risk assets** across the control plane:
-
-* Public IPs, endpoints, and services
-* Internet‑exposed management ports (RDP/SSH)
-* Over‑permissive network rules (e.g., `0.0.0.0/0`)
-* Identity exposure correlated with network exposure
-
-### 3) Cloud Exposure Map
-
-Discovered assets are normalized into a **Cloud Exposure Map** that represents how attackers could realistically reach resources.
-
-* Asset relationships (identity ↔ network ↔ data)
-* Exposure context (public, restricted, internal)
-* Signals used to infer **attack‑path potential**
-
-### 4) Agent Reasoning Loop
-
-Multiple AI agents analyze the exposure map in a continuous reasoning loop:
-
-* **Sentinel Agent** – vulnerability detection and attack surface analysis
-* **Forge Agent** – risk scoring, threat correlation, and prioritization
-* **GRC Agent** – control mapping, audit impact, and compliance posture
-
-The **AI Core** orchestrates context sharing, deduplication, and explainable decisions.
-
-### 5) Risk & GRC Outputs
-
-Findings are produced in both **machine‑readable** and **executive‑ready** formats:
-
-* Risk dashboards and trends
-* GRC reports (NIST CSF, CIS, ISO 27001)
-* Executive summaries with business impact and SLA context
+Security constraints and cost controls are intentionally aligned.
 
 ---
 
-## 🤖 Agentic Architecture
+## 📚 Secure RAG Threat Model Alignment
 
-SentinelForge AI is powered by multiple AI agents, each representing a senior security function:
+SentinelForge AI applies a **Secure Retrieval-Augmented Generation (RAG) Threat Model** aligned with **OWASP AI Top 10** and the **NIST AI Risk Management Framework (AI RMF)**.
 
-### 🧑‍💻 Vulnerability Engineer Agent
+### Alignment with OWASP AI Top 10
 
-* Interprets cloud findings
-* Removes false positives
-* Evaluates exploitability and exposure
-* Applies risk aging logic
-
-### 🧑‍⚖️ GRC Analyst Agent
-
-* Maps findings to:
-
-  * NIST CSF
-  * ISO 27001
-  * CIS Azure Benchmark
-* Identifies control gaps
-* Flags audit and compliance risk
-
-### 🛰️ Attack Surface Agent
-
-* Identifies externally reachable assets
-* Correlates exposure with identity and configuration risk
-* Flags assets with high likelihood of exploitation
-* Feeds prioritization into risk scoring and SLA logic
-
-### 🧠 Executive Risk Agent
-
-* Translates technical risk into business language
-* Produces board- and audit-ready summaries
-* Highlights top risks that matter *now*
+| OWASP AI Risk                          | Secure RAG Mitigations                                                    |
+| -------------------------------------- | ------------------------------------------------------------------------- |
+| **A01 – Prompt Injection**             | Context firewalls, system-policy enforcement, untrusted document handling |
+| **A02 – Insecure Output Handling**     | Output DLP, redaction, summarization, refusal modes                       |
+| **A03 – Training Data Poisoning**      | Source governance, provenance tracking, pre-index validation              |
+| **A04 – Model Denial of Service**      | Rate limiting, token budgets, retrieval throttling                        |
+| **A05 – Supply Chain Vulnerabilities** | Allowlisted sources, ingestion audits, isolation                          |
+| **A06 – Sensitive Data Disclosure**    | Pre-index DLP, retrieval authorization, output filtering                  |
+| **A07 – Insecure Tools / Plugins**     | Least-privilege tools, scoped credentials                                 |
+| **A08 – Excessive Agency**             | Advisory-only agents, human-in-the-loop controls                          |
+| **A09 – Overreliance on LLMs**         | Citation enforcement, confidence gating                                   |
+| **A10 – Model Theft**                  | Secure embedding storage, IAM enforcement                                 |
 
 ---
 
-## ☁️ Phase 1: Azure Edition (MVP)
+### Alignment with NIST AI Risk Management Framework (AI RMF)
 
-SentinelForge AI currently focuses on **Microsoft Azure**, using a fully agentless approach.
+**GOVERN**
+Policies, ownership, audit logging, and approval workflows for all AI components.
 
-### Data Sources
+**MAP**
+Threat modeling of RAG pipelines, trust boundary identification, asset classification.
 
-* Azure Resource Graph
-* Microsoft Graph (Entra ID)
-* Azure Policy
-* Microsoft Defender for Cloud (read-only signals)
+**MEASURE**
+Automated testing for prompt injection, poisoning, leakage, and access-control failures.
 
-### Detection Categories
-
-#### 🔐 Identity & Access Risk
-
-* Over-privileged roles (Global Admin sprawl)
-* Guest accounts with elevated access
-* Stale users and service principals
-* MFA gaps on privileged identities
-
-#### 🖥️ Compute & Network Exposure
-
-* Publicly exposed virtual machines
-* NSGs allowing unrestricted ingress
-* RDP / SSH exposure
-* Missing Defender or encryption controls
-
-#### 🗄️ Storage & Data Exposure
-
-* Public blob containers
-* Missing private endpoints
-* No soft delete or immutability
-* Encryption misconfigurations
-
-#### 🛰️ Attack Surface Exposure
-
-* Public IPs and endpoints
-* Internet-facing management ports
-* Overly permissive NSG rules
-* Unprotected external services
-
-#### ⚙️ Security Control Drift
-
-* Azure Policy non-compliance
-* Disabled Defender plans
-* Logging and monitoring gaps
+**MANAGE**
+Incident response playbooks, containment strategies, retraining triggers, and continuous improvement.
 
 ---
 
-## 📊 Output & Artifacts
+## 🧩 Why This Matters
 
-### Machine-Readable
+This design ensures SentinelForge AI:
 
-* JSON findings
-* Risk scores
-* SLA and risk aging metrics
-* MITRE ATT&CK technique mapping
-* Control framework mappings
+* Can be **explained to auditors**
+* Can be **trusted by security engineers**
+* Can be **operated at scale**
+* Can be **extended safely as agent autonomy increases**
 
-### Human-Readable
-
-* Executive risk summaries
-* Top risk dashboards
-* GRC alignment tables
-* Prioritized remediation guidance
+Most AI systems start with capabilities and add governance later.
+SentinelForge AI does the opposite.
 
 ---
 
-## 🧱 Repository Structure (Planned)
+## 🧠 Built for Learning, Built for Production Thinking
 
-```
-sentinelforge-ai/
-│
-├── collectors/
-│   ├── azure_identity.py
-│   ├── azure_compute.py
-│   ├── azure_network.py
-│   ├── azure_storage.py
-│
-├── agents/
-│   ├── vuln_engineer_agent.py
-│   ├── grc_agent.py
-│   ├── exec_agent.py
-│
-├── schemas/
-│   ├── finding.schema.json
-│
-├── risk_engine/
-│   ├── scoring.py
-│   ├── risk_aging.py
-│
-├── mappings/
-│   ├── nist_csf.yaml
-│   ├── cis_azure.yaml
-│
-└── README.md
-```
+This governance model is reused across:
+
+* RAG pipelines
+* Agent reasoning loops
+* Executive reporting agents
+* Future Zero-Trust and AI-Security extensions
+
+The same framework will be applied as SentinelForge AI expands across **Azure → AWS → GCP**.
 
 ---
 
-## 🧭 Why SentinelForge Starts With These First 5 ASM Findings
+## 🛡️ Final Thought
 
-SentinelForge AI intentionally begins with a small, high‑impact set of **Attack Surface Management (ASM) findings**.
+SentinelForge AI isn’t just showing *what AI can do* in cloud security.
 
-These first five rules were selected because they represent the **most common, most exploitable, and most business‑impacting cloud breach paths**, using **only agentless control‑plane data**.
+It demonstrates **how AI should be built**:
 
-### Attacker‑Informed Design
-
-Rather than starting with dozens of compliance checks, SentinelForge models how attackers actually operate:
-
-| Attacker Question                      | Corresponding ASM Finding                      |
-| -------------------------------------- | ---------------------------------------------- |
-| What is exposed to the internet?       | Internet‑Exposed VM / Assets                   |
-| Can I authenticate or gain access?     | Public Asset + Privileged Identity Without MFA |
-| Can I access or exfiltrate data?       | Public Storage Exposure                        |
-| Can I move laterally or expand impact? | Over‑Permissive Network Rules                  |
-| Will anyone detect me?                 | External Assets Without Logging                |
-
-This approach prioritizes **realistic breach paths** over isolated misconfigurations.
-
-### High Signal, Low Noise
-
-Each initial ASM finding:
-
-* Triggers infrequently
-* Represents immediate risk when present
-* Requires little interpretation to understand severity
-
-This ensures SentinelForge builds **trust and credibility** before expanding coverage.
-
-### Agentless and Enterprise‑Safe
-
-All five findings:
-
-* Use Azure control‑plane APIs only
-* Require no host‑based agents
-* Scale across large cloud environments
-* Are suitable for regulated industries
-
-### GRC‑Aligned Without Being Compliance‑Driven
-
-While these findings map cleanly to NIST, CIS, and ISO frameworks, they are defined first by **exploitability and business impact**, not checkbox compliance.
-
-This allows SentinelForge to support:
-
-* Audit readiness
-* Risk‑based prioritization
-* Executive decision‑making
-
-### Foundation for Expansion
-
-These five findings establish the core **risk philosophy** of SentinelForge AI. Future detections build on this foundation rather than replacing it.
-
----
-
-## 🔮 Roadmap
-
-* Azure MVP detections
-* Risk scoring and SLA logic
-* GRC control mapping expansion
-* Executive reporting engine
-* AWS and GCP support
-* Multi-cloud security graph
-
----
-
-## 🎯 Intended Audience
-
-* Security Engineers
-* Vulnerability Management Teams
-* GRC & Compliance Teams
-* Cloud Security Architects
-* CISOs and Security Leadership
-
----
-
-## ⚠️ Disclaimer
-
-SentinelForge AI is a **research and portfolio project** intended to demonstrate modern cloud security engineering, agentic AI workflows, and GRC-aware vulnerability management concepts. It is not a commercial security product.
-
----
-
-## 🛡️ Final Note
-
-SentinelForge AI represents a vision of **how cloud security should work**:
-
-* Less noise
-* More context
-* Clear risk ownership
-* Engineer-first intelligence
+* With constraints
+* With accountability
+* With cost awareness
+* With security first
 
 > *Forge security intelligence. Guard what matters.*
+
+---
+
+
+
 
 
 
